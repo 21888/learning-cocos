@@ -565,3 +565,30 @@ cc.game.addPersistRootNode(myNode);
 ```
 
 上面的接口会将`myNode`变为常驻节点,这样挂在上面的组件都可以在场景之间持续作用,我们可以用这样的方法来存储玩家信息,或下一个场景初始化时需要的各种数据
+
+## 资源管理
+
+### 3.1 通过资源属性设置和加载资源
+
+在 creator 中, 所有继承自 `cc.Asset`的类型都统称资源,如`cc.Texture2D`,`cc.SpriteFrame`,`cc.AnimationClip`,`ccPrefab`等.它们的加载是统一并且自动化的,相互依赖的资源能够被自动预加载.
+
+> 例如,当引擎在加载场景时,会先自动加载场景关联到的资源,这些资源如果再关联其它资源,其它也会被先加载,等加载全部完成后,场景加载才会结束.
+
+脚本中可以这样定义一个Asset属性
+
+```js
+// NewScript.js
+
+cc.Class({
+    extends: cc.Component,
+    properties: {
+        sprite_frame:{
+            default: null,
+            type: cc.SpriteFrame
+        }
+    }
+})
+```
+
+
+

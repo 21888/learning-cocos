@@ -24,7 +24,7 @@ declare namespace cc {
 	var newAction = cc.speed(action, 0.5);
 	``` 
 	*/
-	export function speed(action: ActionInterval, speed: number): Action;	
+	export function speed(action: ActionInterval, speed: number): Action;
 	/**
 	!#en Create a follow action which makes its target follows another node.
 	!#zh 追踪目标节点的位置。

@@ -36,6 +36,10 @@ cc.Class({
         target: {
             default: null,
             type: cc.Prefab
+        },
+        sprite_frame: {
+            default: null,
+            type: cc.SpriteFrame
         }
         // foo: {
         //     // ATTRIBUTES:
@@ -58,6 +62,19 @@ cc.Class({
 
     onLoad() {
         cc.log("onLoad ...")
+        // let sprite = this.node.getComponent(cc.Sprite);
+        // sprite.spriteFrame = this.sprite_frame
+
+        let self = this;
+        // cc.loader.loadRes("Player", cc.Prefab, function (err, prefab) {
+        //     let newNode = cc.instantiate(prefab);
+        //     newNode.setPosition(100, 100);
+        //     self.node.addChild(newNode)
+        // })
+
+        // cc.loader.releaseRes("Player")
+
+
     },
     onEnable() {
         cc.log("onEnable ...")
@@ -107,21 +124,27 @@ cc.Class({
         let childrenCount = this.node.childrenCount;
         cc.log("当前的子节点数量: ", childrenCount)
 
-        // 通过代码的方式创建一个新节点
         let self = this;
-        cc.loader.loadRes("sheep", cc.SpriteFrame, function (err, spriteFrame) {
-            let node = new cc.Node("sprite");
-            let sp = node.addComponent(cc.Sprite);
-            sp.spriteFrame = spriteFrame
-            node.parent = self.node
-            node.setContentSize(100, 100)
-        })
+        // 通过代码的方式创建一个新节点
+        // cc.loader.loadRes("sheep", cc.SpriteFrame, function (err, spriteFrame) {
+        //     let node = new cc.Node("sprite");
+        //     let sp = node.addComponent(cc.Sprite);
+        //     sp.spriteFrame = spriteFrame
+        //     node.parent = self.node
+        //     node.setContentSize(100, 100)
+        // })
 
         // 复制/克隆一个节点
         // let targetNode = cc.instantiate(this.target);
         // targetNode.parent = this.node
         // targetNode.setPosition(0,0)
         // targetNode.setScale(1.5)
+
+        // setTimeout(function () {
+        //     cc.director.loadScene("MyScene")
+        // }.bind(this))
+
+
     },
 
 

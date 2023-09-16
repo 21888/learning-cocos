@@ -565,3 +565,66 @@ cc.game.addPersistRootNode(myNode);
 ```
 
 上面的接口会将`myNode`变为常驻节点,这样挂在上面的组件都可以在场景之间持续作用,我们可以用这样的方法来存储玩家信息,或下一个场景初始化时需要的各种数据
+
+## 资源管理
+
+### 3.1 通过资源属性设置和加载资源
+
+在 creator 中, 所有继承自 `cc.Asset`的类型都统称资源,如`cc.Texture2D`,`cc.SpriteFrame`,`cc.AnimationClip`,`ccPrefab`等.它们的加载是统一并且自动化的,相互依赖的资源能够被自动预加载.
+
+> 例如,当引擎在加载场景时,会先自动加载场景关联到的资源,这些资源如果再关联其它资源,其它也会被先加载,等加载全部完成后,场景加载才会结束.
+
+脚本中可以这样定义一个Asset属性
+
+```js
+// NewScript.js
+
+cc.Class({
+    extends: cc.Component,
+    properties: {
+        sprite_frame:{
+            default: null,
+            type: cc.SpriteFrame
+        }
+    }
+})
+```
+
+### 3.2 如何在属性检查起立设置资源
+
+
+
+![image-20230916222114941](./readme.assets/image-20230916222114941.png)
+
+### 3.3 动态加载资源
+
+creator 提供了 `cc.loader.loadRes`这个API 来专门加载那些位于resources目录下的 Asset .调用时,你只要传入相对resources的路径即可,并且路径的结尾处**不能包函文件扩展名**
+
+```js
+let self = this;
+// 加载 Prefab
+cc.loader.loadRes("player",function(err,prefab){
+    let newNode = cc.instantiate(prefab);
+    self.node.addChild(newNode);
+})
+```
+
+**加载SpriteFrame**
+
+图片设置为Sprite后,会将在**资源管理器**中生成一个对应的SpriteFrame.但如果直接加载`test/assets/image`,得到的类型将会是cc.Texture2D.你必须指定第二个参数为资源的类型,才能加载到图片生成的cc.SpriteFrame:
+
+### 3.4 资源的释放
+
+`loadRes`加载进来的单个资源如果需要释放,可以调用`cc.loader.releaseRes`,`releaseRes`可以传入和`loadRes`相同的路径和类型参数
+
+```js
+cc.loader.releaseRes("sheep",cc.SpriteFrame);
+cc.loader.releaseRes("sheep");
+```
+
+此外,你也可以使用`cc.loader.releaseAsset`来释放特定的Asset实例
+
+```js
+cc.loader.releaseAsset(spriteFrame)
+```
+

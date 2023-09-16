@@ -565,3 +565,213 @@ cc.game.addPersistRootNode(myNode);
 ```
 
 上面的接口会将`myNode`变为常驻节点,这样挂在上面的组件都可以在场景之间持续作用,我们可以用这样的方法来存储玩家信息,或下一个场景初始化时需要的各种数据
+
+## 资源管理
+
+### 3.1 通过资源属性设置和加载资源
+
+在 creator 中, 所有继承自 `cc.Asset`的类型都统称资源,如`cc.Texture2D`,`cc.SpriteFrame`,`cc.AnimationClip`,`ccPrefab`等.它们的加载是统一并且自动化的,相互依赖的资源能够被自动预加载.
+
+> 例如,当引擎在加载场景时,会先自动加载场景关联到的资源,这些资源如果再关联其它资源,其它也会被先加载,等加载全部完成后,场景加载才会结束.
+
+脚本中可以这样定义一个Asset属性
+
+```js
+// NewScript.js
+
+cc.Class({
+    extends: cc.Component,
+    properties: {
+        sprite_frame:{
+            default: null,
+            type: cc.SpriteFrame
+        }
+    }
+})
+```
+
+### 3.2 如何在属性检查起立设置资源
+
+
+
+![image-20230916222114941](./readme.assets/image-20230916222114941.png)
+
+### 3.3 动态加载资源
+
+creator 提供了 `cc.loader.loadRes`这个API 来专门加载那些位于resources目录下的 Asset .调用时,你只要传入相对resources的路径即可,并且路径的结尾处**不能包函文件扩展名**
+
+```js
+let self = this;
+// 加载 Prefab
+cc.loader.loadRes("player",function(err,prefab){
+    let newNode = cc.instantiate(prefab);
+    self.node.addChild(newNode);
+})
+```
+
+**加载SpriteFrame**
+
+图片设置为Sprite后,会将在**资源管理器**中生成一个对应的SpriteFrame.但如果直接加载`test/assets/image`,得到的类型将会是cc.Texture2D.你必须指定第二个参数为资源的类型,才能加载到图片生成的cc.SpriteFrame:
+
+### 3.4 资源的释放
+
+`loadRes`加载进来的单个资源如果需要释放,可以调用`cc.loader.releaseRes`,`releaseRes`可以传入和`loadRes`相同的路径和类型参数
+
+```js
+cc.loader.releaseRes("sheep",cc.SpriteFrame);
+cc.loader.releaseRes("sheep");
+```
+
+此外,你也可以使用`cc.loader.releaseAsset`来释放特定的Asset实例
+
+```js
+cc.loader.releaseAsset(spriteFrame)
+```
+
+## 4 使用动作系统
+
+cocos creator 提供的动作系统可以在一定时间内对接点完成位移,缩放,旋转等各种动作.
+
+cocos 引擎的action动作类并不是一个在屏幕中显示的对象,动作必须要依托于Node节点类以及它的子类的实例才能发挥它的作用,cocos中的动作不仅包括位置移动等,还包括跳跃,旋转,甚至是对象透明度的变化和颜色的渐变,这些基本动作可以构成各种复杂的动作,也可以通过sequence形成一个完整的动作序列
+
+
+
+### 4.1基本使用API
+
+动作系统的使用方式也很简单,在`cc.Node`中 ,支持如下API:
+
+```js
+// 创建一个移动动作
+let action = cc.moveTo(2,100,100);
+// 执行动作
+this.node.runAction(action);
+// 停止一个动作
+this.node.stopAction(action);
+// 停止所有动作
+this.node.stopAllActions();
+```
+
+### 4.2 基础动作
+
+基础动作就是实现各种形变，位移动画的动作，比如 `cc.moveTo` 用来移动节点到某个位置；`cc.rotateBy`用来旋转节点一定的角度；`cc.scaleTo` 用来缩放节点。
+
+基础动作中分为时间间隔动作和即时动作，前者是在一定时间间隔内完成的渐变动作，前面提到的都是时间间隔动作，它们全部继承自 cc.ActionInterval。后者则是立即发生的，比如用来调用回调函数的 cc.callFunc；用来隐藏节点的 cc.hide，它们全部继承自 cc.ActionInstant。
+
+### 4.2.2 容器动作
+
+容器动作可以以不同的方式将动作组织起来，下面是几种容器动作的用途：
+
+1. 顺序动作 `cc.sequence` 顺序动作可以让一系列子动作按顺序一个个执行。示例：
+
+   ```js
+    // 让节点左右来回移动
+    let seq = cc.sequence(cc.moveBy(0.5, 200, 0), cc.moveBy(0.5, -200, 0));
+    this.node.runAction(seq);
+   ```
+
+2. 同步动作 `cc.spawn` 同步动作可以同步执行对一系列子动作，子动作的执行结果会叠加起来修改节点的属性。示例：
+
+   ```js
+    // 让节点在向上移动的同时缩放
+    let spawn = cc.spawn(cc.moveBy(0.5, 0, 50), cc.scaleTo(0.5, 0.8, 1.4));
+    this.node.runAction(spawn);
+   ```
+
+3. 重复动作 `cc.repeat` 重复动作用来多次重复一个动作。示例：
+
+   ```js
+    // 让节点左右来回移动，并重复5次
+    let seq = cc.repeat(
+                cc.sequence(
+                    cc.moveBy(2, 200, 0),
+                    cc.moveBy(2, -200, 0)
+                ), 5);
+    this.node.runAction(seq);
+   ```
+
+4. 永远重复动作 `cc.repeatForever` 顾名思义，这个动作容器可以让目标动作一直重复，直到手动停止。
+
+   ```js
+    // 让节点左右来回移动并一直重复
+    let seq = cc.repeatForever(
+                cc.sequence(
+                    cc.moveBy(2, 200, 0),
+                    cc.moveBy(2, -200, 0)
+                ));
+   ```
+
+5. 速度动作 `cc.speed` 速度动作可以改变目标动作的执行速率，让动作更快或者更慢完成。
+
+   ```js
+    // 让目标动作速度加快一倍，相当于原本2秒的动作在1秒内完成
+    let action = cc.speed(
+                    cc.spawn(
+                        cc.moveBy(2, 0, 50),
+                        cc.scaleTo(2, 0.8, 1.4)
+                    ), 2);
+   this.node.runAction(action);
+   ```
+
+从上面的示例中可以看出，不同容器类型是可以复合的，除此之外，我们给容器类型动作提供了更为方便的链式 API，动作对象支持以下三个 API：`repeat`、`repeatForever`、`speed`，这些 API 都会返回动作对象本身，支持继续链式调用。我们来看一个更复杂的动作示例：
+
+```js
+// 一个复杂的跳跃动画
+this.jumpAction = cc.sequence(
+    cc.spawn(
+        cc.scaleTo(0.1, 0.8, 1.2),
+        cc.moveTo(0.1, 0, 10)
+    ),
+    cc.spawn(
+        cc.scaleTo(0.2, 1, 1),
+        cc.moveTo(0.2, 0, 0)
+    ),
+    cc.delayTime(0.5),
+    cc.spawn(
+        cc.scaleTo(0.1, 1.2, 0.8),
+        cc.moveTo(0.1, 0, -10)
+    ),
+    cc.spawn(
+        cc.scaleTo(0.2, 1, 1),
+        cc.moveTo(0.2, 0, 0)
+    )
+// 以1/2的速度慢放动画，并重复5次
+).speed(2).repeat(5);
+```
+
+### 4.2.3 动作回调
+
+动作回调可以用以下的方式声明：
+
+```js
+let finished = cc.callFunc(this.myMethod, this, opt);
+```
+
+`cc.callFunc` 第一个参数是处理回调的方法，即可以使用 CCClass 的成员方法，也可以声明一个匿名函数：
+
+```js
+let finished = cc.callFunc(function () {
+    //doSomething
+}, this, opt);
+```
+
+第二个参数指定了处理回调方法的 context（也就是绑定 this），第三个参数是向处理回调方法的传参。您可以这样使用传参：
+
+```js
+let finished = cc.callFunc(function(target, score) {
+    cc.log("动作回调");
+}, this, 100);
+```
+
+在声明了回调动作 `finished` 后，您可以配合 `cc.sequence` 来执行一整串动作并触发回调：
+
+```js
+let myAction = cc.sequence(cc.moveBy(1, cc.v2(0, 100)), cc.fadeOut(1), finished);
+```
+
+在同一个 sequence 里也可以多次插入回调：
+
+```js
+let myAction = cc.sequence(cc.moveTo(1, cc.v2(0, 0)), finished1, cc.fadeOut(1), finished2); 
+```
+
+注意: 在 cc.callFunc 中不应该停止自身动作，由于动作是不能被立即删除，如果在动作回调中暂停自身动作会引发一系列遍历问题，导致更严重的 bug。

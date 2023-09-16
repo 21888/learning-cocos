@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.4",
+  "uuid": "7b7194ed-8830-4240-8a3e-3811152f1632",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 256,
+  "height": 512,
+  "platformSettings": {},
+  "subMetas": {
+    "stoneWallDoorOpen_E": {
+      "ver": "1.0.4",
+      "uuid": "dcaa6eaa-9edc-4c2b-9ce1-bf1b18f03d63",
+      "rawTextureUuid": "7b7194ed-8830-4240-8a3e-3811152f1632",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 47.5,
+      "offsetY": -117,
+      "trimX": 95,
+      "trimY": 252,
+      "width": 161,
+      "height": 242,
+      "rawWidth": 256,
+      "rawHeight": 512,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

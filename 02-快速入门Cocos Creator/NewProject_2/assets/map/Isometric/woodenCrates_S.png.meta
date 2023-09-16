@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.4",
+  "uuid": "a544ceef-536e-4f83-8ce0-b27daad145b6",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 256,
+  "height": 512,
+  "platformSettings": {},
+  "subMetas": {
+    "woodenCrates_S": {
+      "ver": "1.0.4",
+      "uuid": "30cb9033-8c0c-4200-9ae6-c2e4b6a6ac3e",
+      "rawTextureUuid": "a544ceef-536e-4f83-8ce0-b27daad145b6",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -8,
+      "offsetY": -143,
+      "trimX": 75,
+      "trimY": 348,
+      "width": 90,
+      "height": 102,
+      "rawWidth": 256,
+      "rawHeight": 512,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

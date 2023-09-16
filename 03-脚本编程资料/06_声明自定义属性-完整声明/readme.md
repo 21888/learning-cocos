@@ -1,0 +1,170 @@
+# 脚本编程
+
+Cocos Creator 的脚本主要是通过扩展组件来进行开发的. 目前Cocos Creator 支持**JavaScript** 和 **TypeScript**两种脚本语言.通过编写脚本组件,并将它赋予到场景节点中来驱动场景中的物体.
+
+在组件脚本的编写过程中,你可以通过声明属性,将脚本中需要调节的变量映射到**属性检查器**(Properties)中,供策划和美术调整.与此同时,你也可以通过注册特定的回调函数,来帮助你初始化,更新甚至销毁节点.
+
+## 节点和组件
+
+### 1.1 创建和使用脚本组件
+
+- 创建脚本组件
+
+  在cocos creator中,脚本也是资源的一部分.你可以在资源编辑器中通过点击"创建"按钮来添加病选择JavaScript或者TypeScript来创建一份组件脚本.此时你会在你的资源编辑器中得到一份新的脚本
+
+![image-20230910020510739](./readme.assets/image-20230910020510739.png)
+
+**注意**:用户也可以通过直接拖拽脚本资源到**属性检查器**的方式来添加脚本
+
+### 1.2 使用cc.Class 生命类型
+
+`cc.Class` 是一个很常用的API,用于声明cocos creator中的类,为了方便区分,我们把使用cc.Class声明的类叫做**CCClass**
+
+- 定义一个CCClass
+
+  调用`cc.Class`,传入一个原型对象,在原型对象中以键值对的形式设定所需要的类型参数,就能创建出所需要的类.
+
+  ```js
+  let Sprite = cc.Class({
+      name:"sprite",
+  })
+  ```
+
+  以上代码用cc.Class创建了一个类型,并且赋值给了`Sprite`变量,同时还将类名设为"sprite",类名用于序列化,一般可以省略.
+
+- 实例化
+
+  `Sprite`变量保存的是一个JavaScript构造函数,可以直接new出一个对象
+
+  ```js
+  let obj = new Sprite()
+  ```
+
+- 判断类型
+
+  需要做类型判断时,可以用JavaScript原生的`instanceof`
+
+  ```js
+  cc.log(obj instanceof Sprite); // true
+  ```
+
+- 实例方法
+
+  ```js
+  let Sprite = cc.CLass({
+      // 声明一个叫 "print" 的实例方法
+      print: function() {}
+  })
+  ```
+
+  
+
+### 1.3.1 简单声明
+
+在多数情况下,我们都可以使用简单声明.
+
+**(1) 基本类型**
+
+- 当声明的属性为基本JavaScript类型时,可以直接赋予默认值:
+
+  ```JavaScript
+  properties: {
+          height: 20, // number
+          type: "actor", // string 
+          loaded: false, // boolean
+          target: null, // object
+          // foo: {
+          //     // ATTRIBUTES:
+          //     default: null,        // The default value will be used only when the component attaching
+          //                           // to a node for the first time
+          //     type: cc.SpriteFrame, // optional, default is typeof default
+          //     serializable: true,   // optional, default is true
+          // },
+          // bar: {
+          //     get () {
+          //         return this._bar;
+          //     },
+          //     set (value) {
+          //         this._bar = value;
+          //     }
+          // },
+      },
+  ```
+
+- 当声明的属性具备类型时(如:`cc.Node`,`cc.Vec2`等), 可以在声明处填写他们的构造函数来完成声明,如:
+
+  ```JavaScript
+  properties:{
+      target: cc.Node,
+      pos: cc.Vec2,
+  }
+  ```
+
+**(2) 数组类型**
+
+当声明属性是一个数组时,可以在声明处填写他们的类型或构造函数来完成声明,如:
+
+```JavaScript
+properties:{
+    any:[],					//不定义具体类型的数组
+    bools:[cc.Boolean],
+    strings:[cc.String],
+    floats:[cc.Float],
+    ...
+}
+```
+
+
+
+
+
+### 1.3.2 完整声明
+
+有些情况下,我们需要为属性声明添加参数,这些参数控制了属性在**属性检查器**中的显示方式,以及属性在场景序列化过程中的行为.
+
+**(1) 基本类型**
+
+```js
+properties:{
+    score:{
+        default:0,
+        displayName:"得分",
+        tooltip:"设置玩家初始得分",
+    }
+}
+```
+
+
+
+以上代码为`score`属性设置了三个参数`default`,`displayName`和`tooltip`.这几个参数分别指定了`score`的默认值为0,在**属性检查器**里,其属性名将显示为:"Score(player)",并且当鼠标移到参数上时,显示对应的Tooltip
+
+下面是常用参数:
+
+- **default**:设置属性的默认值,这个默认值仅在组件**第一次**添加到节点上时才会用到
+- **type**:限定属性的数据类型
+- **visible**:设为false则不再**属性检查器**面板中显示该属性
+- **serializable**:设为false则不序列化(保存)该属性
+- **displayName**:在**属性检查器**面板中显示成指定名字
+- **tooltip**:在**属性检查器**面板中添加属性的Tooltip
+
+**(2) 数组类型**
+
+数组的default必须设置为`[]`,如果要在**属性检查器**中编辑,还需要设置type为构造函数,枚举,或者`cc.Integer`,`cc.Float`,`cc.Boolean`和`cc.String`.
+
+```js
+properties:{
+    name:{
+        default:[],
+        type: [cc.String]		//	用type指定数组每个元素都是字符串类型
+    },
+    enemies:{
+        default:[],
+        type: [cc.Node]			//	type 同样写成数组,提高代码可读性
+    },
+}
+```
+
+
+
+
+

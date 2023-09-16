@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.4",
+  "uuid": "77558fc1-2506-4725-a060-e3c442990820",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 256,
+  "height": 512,
+  "platformSettings": {},
+  "subMetas": {
+    "woodenSupportBeams_W": {
+      "ver": "1.0.4",
+      "uuid": "2805974f-e020-4fb8-a7c8-408c5ffc07a9",
+      "rawTextureUuid": "77558fc1-2506-4725-a060-e3c442990820",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": -57.5,
+      "offsetY": -56.5,
+      "trimX": 0,
+      "trimY": 199,
+      "width": 141,
+      "height": 227,
+      "rawWidth": 256,
+      "rawHeight": 512,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
